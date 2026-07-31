@@ -1,25 +1,35 @@
 const {test, expect, request} = require ('@playwright/test');
 const { ok } = require('assert');
 const loginPayload = {userEmail: "rcptest43@gmail.com", userPassword: "Iamking@000"}
+const {ApiUtils} = require(".//utils//ApiUtil");
 let token;
+
 test.beforeAll( async()=> {
 
     const apiContext = await request.newContext()
-   const loginResponse = await apiContext.post("https://rahulshettyacademy.com/api/ecom/auth/login", 
-        {
-            data: loginPayload
+     ApiUtil = new ApiUtils(apiContext,loginPayload);
+     ApiUtil.ge
+    
+    
+    
+   
 
-        }
-
-    )
-
-expect(loginResponse, ok()).toBeTruthy();
+expect(loginResponse.ok()).toBeTruthy();
 const loginResponseJson = await loginResponse.json();
  token = loginResponseJson.token;
 console.log(token);
 });
 
 test('@Webst Client App login', async ({ page }) => {
+
+   const apiUtils = new ApiUtil(apiContext , loginPayload)
+
+    await page.addInitScript(value =>{
+        window.localStorage.setItem('token' , value);
+    }, token);
+
+    await page.goto("https://rahulshettyacademy.com/client/#/dashboard/dash")
+
    //js file- Login js, DashboardPage
    const email = "rcptest43@gmail.com";
    const productName = 'ZARA COAT 3';
@@ -44,7 +54,7 @@ test('@Webst Client App login', async ({ page }) => {
    await page.getByText("PLACE ORDER").click();
  
    await expect(page.getByText("Thankyou for the order.")).toBeVisible();
-   orderId= await page.locator(".em-spacer-1 .ng-star-inserted").textContent();
+   const orderId = await page.locator("//tr[@class='ng-star-inserted']").textContent();
    console.log(orderId);
 
 })
