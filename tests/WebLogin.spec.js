@@ -1,34 +1,22 @@
-const {test, expect, request} = require ('@playwright/test');
-const { ok } = require('assert');
-const loginPayload = {userEmail: "rcptest43@gmail.com", userPassword: "Iamking@000"}
-const {ApiUtils} = require(".//utils//ApiUtil");
+const { test, expect, request } = require('@playwright/test');
+const loginPayload = { userEmail: 'rcptest43@gmail.com', userPassword: 'Iamking@000' };
+const ApiUtil = require('./utils/ApiUtil');
+
 let token;
+let apiContext;
 
-test.beforeAll( async()=> {
-
-    const apiContext = await request.newContext()
-     ApiUtil = new ApiUtils(apiContext,loginPayload);
-     ApiUtil.ge
-    
-    
-    
-   
-
-expect(loginResponse.ok()).toBeTruthy();
-const loginResponseJson = await loginResponse.json();
- token = loginResponseJson.token;
-console.log(token);
+test.beforeAll(async () => {
+    apiContext = await request.newContext();
+    const apiUtil = new ApiUtil(apiContext, loginPayload);
+    token = await apiUtil.getToken();
 });
 
 test('@Webst Client App login', async ({ page }) => {
-
-   const apiUtils = new ApiUtil(apiContext , loginPayload)
-
-    await page.addInitScript(value =>{
-        window.localStorage.setItem('token' , value);
+    await page.addInitScript(value => {
+        window.localStorage.setItem('token', value);
     }, token);
 
-    await page.goto("https://rahulshettyacademy.com/client/#/dashboard/dash")
+    await page.goto('https://rahulshettyacademy.com/client/#/dashboard/dash');
 
    //js file- Login js, DashboardPage
    const email = "rcptest43@gmail.com";
